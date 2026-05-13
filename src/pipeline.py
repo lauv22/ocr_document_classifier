@@ -14,6 +14,14 @@ def run_pipeline(image_path):
         print(f"❌ Error: File not found → {image_path}")
         return None
 
+    # Check supported formats
+    supported = ['.jpg', '.jpeg', '.png', '.jfif', '.bmp', '.tiff', '.webp']
+    ext = os.path.splitext(image_path)[1].lower()
+    if ext not in supported:
+        print(f"❌ Unsupported format: {ext}")
+        print(f"   Supported: {', '.join(supported)}")
+        return None
+
     print(f"\n📄 Processing: {image_path}")
     print("-" * 50)
 
