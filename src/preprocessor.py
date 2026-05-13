@@ -15,7 +15,7 @@ def preprocess_image(image_path):
     import os
     ext = os.path.splitext(image_path)[1].lower()
     if ext not in SUPPORTED_FORMATS:
-        print(f"❌ Unsupported format: {ext}")
+        print(f" Unsupported format: {ext}")
         print(f"   Supported formats: {', '.join(SUPPORTED_FORMATS)}")
         return None
 
