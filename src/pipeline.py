@@ -26,12 +26,12 @@ def run_pipeline(image_path):
     print("-" * 50)
 
     # Step 1: Preprocess the image
-    print("🔧 Step 1: Preprocessing image...")
+    print(" Step 1: Preprocessing image...")
     preprocessed = preprocess_image(image_path)
     print("    Image cleaned and sharpened")
 
     # Step 2: Extract text using OCR
-    print("🔍 Step 2: Extracting text with OCR...")
+    print(" Step 2: Extracting text with OCR...")
     extracted_text = extract_text(preprocessed)
     print(f"    Text extracted ({len(extracted_text)} characters)")
 
