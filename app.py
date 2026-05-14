@@ -4,14 +4,12 @@ import os
 from src.pipeline import run_pipeline
 from src.classifier import extract_fields
 
-# Page config
 st.set_page_config(
     page_title="OCR Document Classifier",
     page_icon="📄",
     layout="centered"
 )
 
-# Initialize session state
 if 'page' not in st.session_state:
     st.session_state.page = 'upload'
 if 'result' not in st.session_state:
@@ -21,93 +19,75 @@ if 'uploaded_image' not in st.session_state:
 if 'file_name' not in st.session_state:
     st.session_state.file_name = None
 
-# Custom CSS
 st.markdown("""
     <style>
     .title {
         text-align: center;
-        font-size: 2.4rem;
+        font-size: 1.8rem;
         font-weight: 700;
-        color: var(--text-color);
-        margin-bottom: 0.2rem;
+        margin-bottom: 0.1rem;
     }
     .subtitle {
         text-align: center;
         color: #888;
-        font-size: 1rem;
-        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+        margin-bottom: 0.8rem;
     }
     .step-bar {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 1.5rem 0 2rem;
-        gap: 0;
+        margin: 0.5rem 0 0.8rem;
     }
     .step {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
     }
     .step-circle {
-        width: 36px;
-        height: 36px;
+        width: 32px;
+        height: 32px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1rem;
+        font-size: 0.85rem;
         font-weight: 600;
     }
-    .step-circle.active {
-        background: #6c63ff;
-        color: white;
-        border: 2px solid #6c63ff;
-    }
-    .step-circle.done {
-        background: #6c63ff;
-        color: white;
-        border: 2px solid #6c63ff;
-    }
-    .step-circle.inactive {
-        background: transparent;
-        color: #888;
-        border: 2px solid #444;
-    }
-    .step-label {
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-    .step-label.active { color: #6c63ff; }
-    .step-label.done   { color: #6c63ff; }
+    .step-circle.active   { background:#6c63ff; color:white; border:2px solid #6c63ff; }
+    .step-circle.done     { background:#6c63ff; color:white; border:2px solid #6c63ff; }
+    .step-circle.inactive { background:transparent; color:#888; border:2px solid #444; }
+    .step-label { font-size: 0.7rem; font-weight: 500; }
+    .step-label.active   { color: #6c63ff; }
+    .step-label.done     { color: #6c63ff; }
     .step-label.inactive { color: #888; }
     .step-line {
         flex: 1;
         height: 2px;
-        max-width: 80px;
-        margin-bottom: 22px;
+        max-width: 70px;
+        margin-bottom: 18px;
     }
     .step-line.done     { background: #6c63ff; }
     .step-line.inactive { background: #444; }
     .result-card {
         border: 1px solid #2a2a3e;
         border-radius: 14px;
-        padding: 1.2rem 1.5rem;
+        padding: 1rem 1.2rem;
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 14px;
         background: #1a1a2e;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
     }
     .result-icon {
-        width: 52px;
-        height: 52px;
-        border-radius: 12px;
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
+        font-size: 1.6rem;
         flex-shrink: 0;
     }
     .confidence-bar-bg {
@@ -117,54 +97,13 @@ st.markdown("""
         margin-top: 6px;
         width: 100%;
     }
-    .field-table {
-        width: 100%;
-        border-collapse: collapse;
-        border-radius: 10px;
-        overflow: hidden;
-        border: 1px solid #2a2a3e;
-        font-size: 0.9rem;
-    }
-    .field-table th {
-        background: #1a1a2e;
-        color: #888;
-        font-size: 0.78rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        padding: 10px 14px;
-        text-align: left;
-    }
-    .field-table td {
-        padding: 10px 14px;
-        border-top: 1px solid #2a2a3e;
-    }
-    .field-table tr:nth-child(even) td {
-        background: #111120;
-    }
-    .field-table tr:nth-child(odd) td {
-        background: #16162a;
-    }
-    .field-key-cell { color: #888; }
-    .field-val-cell { color: #fff; font-weight: 500; }
-    .upload-zone {
-        border: 2px dashed #3a3a5e;
-        border-radius: 14px;
-        padding: 3rem 2rem;
-        text-align: center;
-        margin: 1rem 0;
-        background: #111120;
-    }
-    .upload-zone-icon { font-size: 2.5rem; margin-bottom: 0.5rem; }
-    .upload-zone-title { font-size: 1rem; font-weight: 600; margin-bottom: 0.3rem; }
-    .upload-zone-sub   { font-size: 0.85rem; color: #888; }
     div.stButton > button {
         width: 100%;
         background: linear-gradient(90deg, #4f8ef7, #a855f7);
         color: white;
         border: none;
-        padding: 0.75rem;
-        font-size: 1rem;
+        padding: 0.6rem;
+        font-size: 0.95rem;
         font-weight: 600;
         border-radius: 10px;
         cursor: pointer;
@@ -179,38 +118,20 @@ st.markdown("""
 
 
 def render_stepper(current_step):
-    # current_step: 1 = upload, 2 = processing, 3 = results
-    steps = [
-        ("📤", "Upload"),
-        ("⚙️", "Processing"),
-        ("✅", "Results"),
-    ]
+    steps = [("📤", "Upload"), ("⚙️", "Processing"), ("✅", "Results")]
     html = '<div class="step-bar">'
     for i, (icon, label) in enumerate(steps):
         step_num = i + 1
         if step_num < current_step:
-            circle_class = "done"
-            label_class  = "done"
-            icon_display = "✓"
+            cc, lc, ic = "done", "done", "✓"
         elif step_num == current_step:
-            circle_class = "active"
-            label_class  = "active"
-            icon_display = icon
+            cc, lc, ic = "active", "active", icon
         else:
-            circle_class = "inactive"
-            label_class  = "inactive"
-            icon_display = icon
-
-        html += f'''
-            <div class="step">
-                <div class="step-circle {circle_class}">{icon_display}</div>
-                <span class="step-label {label_class}">{label}</span>
-            </div>
-        '''
+            cc, lc, ic = "inactive", "inactive", icon
+        html += f'<div class="step"><div class="step-circle {cc}">{ic}</div><span class="step-label {lc}">{label}</span></div>'
         if i < len(steps) - 1:
-            line_class = "done" if step_num < current_step else "inactive"
-            html += f'<div class="step-line {line_class}"></div>'
-
+            line = "done" if step_num < current_step else "inactive"
+            html += f'<div class="step-line {line}"></div>'
     html += '</div>'
     st.markdown(html, unsafe_allow_html=True)
 
@@ -232,22 +153,12 @@ if st.session_state.page == 'upload':
 
     render_stepper(1)
 
-    # Supported badges
     st.markdown("""
-        <div style="text-align:center; margin-bottom: 1.5rem;">
-            <span style="background:#1e3a5f; color:#4f8ef7; padding:4px 12px; border-radius:20px; font-size:0.8rem; margin:3px; display:inline-block;">🛂 Passport</span>
-            <span style="background:#1a3a2a; color:#4ade80; padding:4px 12px; border-radius:20px; font-size:0.8rem; margin:3px; display:inline-block;">📋 Citizenship</span>
-            <span style="background:#3a2a1a; color:#fb923c; padding:4px 12px; border-radius:20px; font-size:0.8rem; margin:3px; display:inline-block;">🪪 National ID</span>
-            <span style="background:#2a1a3a; color:#c084fc; padding:4px 12px; border-radius:20px; font-size:0.8rem; margin:3px; display:inline-block;">🧾 PAN Card</span>
-        </div>
-    """, unsafe_allow_html=True)
-
-    # Styled upload zone hint
-    st.markdown("""
-        <div class="upload-zone">
-            <div class="upload-zone-icon">☁️</div>
-            <div class="upload-zone-title">Drop your document image here</div>
-            <div class="upload-zone-sub">Supported: JPG, JPEG, PNG, JFIF, BMP, TIFF, WEBP</div>
+        <div style="text-align:center; margin-bottom:0.8rem;">
+            <span style="background:#1e3a5f; color:#4f8ef7; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🛂 Passport</span>
+            <span style="background:#1a3a2a; color:#4ade80; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">📋 Citizenship</span>
+            <span style="background:#3a2a1a; color:#fb923c; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🪪 National ID</span>
+            <span style="background:#2a1a3a; color:#c084fc; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🧾 PAN Card</span>
         </div>
     """, unsafe_allow_html=True)
 
@@ -256,31 +167,26 @@ if st.session_state.page == 'upload':
         type=["jpg", "jpeg", "png", "jfif", "bmp", "tiff", "webp"],
         label_visibility="collapsed"
     )
+    st.markdown('<p style="text-align:center; color:#666; font-size:0.8rem; margin-top:4px;">Supported: jpg, jpeg, png, jfif, bmp, tiff, webp</p>', unsafe_allow_html=True)
 
     if uploaded_file is not None:
         st.divider()
         col1, col2 = st.columns([1, 1])
-
         with col1:
             st.image(uploaded_file, caption="Uploaded Document", use_container_width=True)
-
         with col2:
             st.markdown("**File Details**")
             st.markdown(f"- 📁 **Name:** {uploaded_file.name}")
             st.markdown(f"- 📦 **Size:** {round(uploaded_file.size / 1024, 1)} KB")
             st.markdown(f"- 🖼️ **Type:** {uploaded_file.type}")
             st.markdown("")
-
             if st.button("🔍 Classify Document"):
                 with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
                     tmp.write(uploaded_file.read())
                     tmp_path = tmp.name
-
-                with st.spinner("🔧 Preprocessing → 🔍 Extracting text → 🏷️ Classifying..."):
+                with st.spinner("🔧 Preprocessing → 🔍 Extracting → 🏷️ Classifying..."):
                     result = run_pipeline(tmp_path)
-
                 os.unlink(tmp_path)
-
                 if result:
                     st.session_state.result         = result
                     st.session_state.uploaded_image = uploaded_file.getvalue()
@@ -300,27 +206,9 @@ elif st.session_state.page == 'results':
     doc_type = result['document_type']
     scores   = result['scores']
 
-    icon_map = {
-        'Passport'   : '🛂',
-        'Citizenship': '📋',
-        'PAN'        : '🧾',
-        'National ID': '🪪',
-        'Unknown'    : '❓'
-    }
-    color_map = {
-        'Passport'   : '#4f8ef7',
-        'Citizenship': '#4ade80',
-        'PAN'        : '#c084fc',
-        'National ID': '#fb923c',
-        'Unknown'    : '#ef4444'
-    }
-    bg_map = {
-        'Passport'   : '#1e3a5f',
-        'Citizenship': '#1a3a2a',
-        'PAN'        : '#2a1a3a',
-        'National ID': '#3a2a1a',
-        'Unknown'    : '#3a1a1a'
-    }
+    icon_map  = {'Passport':'🛂','Citizenship':'📋','PAN':'🧾','National ID':'🪪','Unknown':'❓'}
+    color_map = {'Passport':'#4f8ef7','Citizenship':'#4ade80','PAN':'#c084fc','National ID':'#fb923c','Unknown':'#ef4444'}
+    bg_map    = {'Passport':'#1e3a5f','Citizenship':'#1a3a2a','PAN':'#2a1a3a','National ID':'#3a2a1a','Unknown':'#3a1a1a'}
 
     icon       = icon_map.get(doc_type, '❓')
     color      = color_map.get(doc_type, '#888')
@@ -332,7 +220,6 @@ elif st.session_state.page == 'results':
 
     render_stepper(3)
 
-    # Back button
     if st.button("← Classify Another Document"):
         st.session_state.page   = 'upload'
         st.session_state.result = None
@@ -340,7 +227,6 @@ elif st.session_state.page == 'results':
 
     st.divider()
 
-    # Image + result card side by side
     left_col, right_col = st.columns([1, 1])
 
     with left_col:
@@ -352,24 +238,22 @@ elif st.session_state.page == 'results':
             )
 
     with right_col:
-        # Result card with confidence bar
         st.markdown(f"""
             <div class="result-card">
                 <div class="result-icon" style="background:{bg};">{icon}</div>
                 <div style="flex:1;">
-                    <p style="font-size:0.8rem; color:#888; margin:0;">Classified as</p>
-                    <p style="font-size:1.5rem; font-weight:700; margin:2px 0; color:{color};">{doc_type}</p>
+                    <p style="font-size:0.78rem; color:#888; margin:0;">Classified as</p>
+                    <p style="font-size:1.4rem; font-weight:700; margin:2px 0; color:{color};">{doc_type}</p>
                     <div style="display:flex; align-items:center; gap:8px;">
                         <div class="confidence-bar-bg" style="flex:1;">
                             <div style="width:{confidence}%; height:100%; background:{color}; border-radius:3px;"></div>
                         </div>
-                        <span style="font-size:0.8rem; color:{color}; font-weight:600; white-space:nowrap;">{confidence}% match</span>
+                        <span style="font-size:0.78rem; color:{color}; font-weight:600; white-space:nowrap;">{confidence}% match</span>
                     </div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
 
-        # Keyword scores compact
         st.markdown("**📈 Keyword scores**")
         max_score = max(scores.values()) if max(scores.values()) > 0 else 1
         for doc, score in scores.items():
@@ -381,35 +265,27 @@ elif st.session_state.page == 'results':
 
     st.divider()
 
-    # Extracted fields as clean table
+    # Extracted fields — using Streamlit columns instead of HTML table
     st.markdown("**🗂️ Extracted Information**")
     fields = extract_fields(result['extracted_text'], doc_type)
 
-    rows_html = ""
-    for key, value in fields.items():
-        rows_html += f"""
-            <tr>
-                <td class="field-key-cell">{key}</td>
-                <td class="field-val-cell">{value}</td>
-            </tr>
-        """
+    header_col1, header_col2 = st.columns([1, 2])
+    with header_col1:
+        st.markdown("<p style='font-size:0.78rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Field</p>", unsafe_allow_html=True)
+    with header_col2:
+        st.markdown("<p style='font-size:0.78rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Value</p>", unsafe_allow_html=True)
 
-    st.markdown(f"""
-        <table class="field-table">
-            <thead>
-                <tr>
-                    <th>Field</th>
-                    <th>Value</th>
-                </tr>
-            </thead>
-            <tbody>
-                {rows_html}
-            </tbody>
-        </table>
-    """, unsafe_allow_html=True)
+    st.markdown("<hr style='margin:6px 0; border-color:#2a2a3e;'>", unsafe_allow_html=True)
+
+    for key, value in fields.items():
+        c1, c2 = st.columns([1, 2])
+        with c1:
+            st.markdown(f"<p style='color:#888; font-size:0.88rem; margin:0; padding:4px 0;'>{key}</p>", unsafe_allow_html=True)
+        with c2:
+            st.markdown(f"<p style='color:#fff; font-size:0.88rem; font-weight:500; margin:0; padding:4px 0;'>{value}</p>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:2px 0; border-color:#1a1a2e;'>", unsafe_allow_html=True)
 
     st.divider()
 
-    # Collapsible raw OCR text
     with st.expander("🔍 View raw OCR text"):
         st.code(result['extracted_text'], language=None)
