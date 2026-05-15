@@ -170,31 +170,32 @@ if st.session_state.page == 'upload':
     st.markdown('<p style="text-align:center; color:#666; font-size:0.8rem; margin-top:4px;">Supported: jpg, jpeg, png, jfif, bmp, tiff, webp</p>', unsafe_allow_html=True)
 
     if uploaded_file is not None:
-        st.divider()
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            st.image(uploaded_file, caption="Uploaded Document", use_container_width=True)
-        with col2:
-            st.markdown("**File Details**")
-            st.markdown(f"- 📁 **Name:** {uploaded_file.name}")
-            st.markdown(f"- 📦 **Size:** {round(uploaded_file.size / 1024, 1)} KB")
-            st.markdown(f"- 🖼️ **Type:** {uploaded_file.type}")
-            st.markdown("")
-            if st.button("🔍 Classify Document"):
-                with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
-                    tmp.write(uploaded_file.read())
-                    tmp_path = tmp.name
-                with st.spinner("🔧 Preprocessing → 🔍 Extracting → 🏷️ Classifying..."):
-                    result = run_pipeline(tmp_path)
-                os.unlink(tmp_path)
-                if result:
-                    st.session_state.result         = result
-                    st.session_state.uploaded_image = uploaded_file.getvalue()
-                    st.session_state.file_name      = uploaded_file.name
-                    st.session_state.page           = 'results'
-                    st.rerun()
-                else:
-                    st.error("❌ Could not process the image. Please try a clearer image.")
+        st.markdown(f"""
+            <div style="background:#1a1a2e; border:1px solid #2a2a3e; border-radius:10px; padding:0.8rem 1rem; display:flex; align-items:center; gap:12px; margin:0.8rem 0;">
+                <span style="font-size:1.5rem;">🖼️</span>
+                <div style="flex:1;">
+                    <p style="margin:0; font-size:0.9rem; font-weight:600; color:#fff;">{uploaded_file.name}</p>
+                    <p style="margin:0; font-size:0.78rem; color:#888;">{round(uploaded_file.size / 1024, 1)} KB • {uploaded_file.type}</p>
+                </div>
+                <span style="font-size:1.2rem;">✅</span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        if st.button("🔍 Classify Document"):
+            with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
+                tmp.write(uploaded_file.read())
+                tmp_path = tmp.name
+            with st.spinner("🔧 Preprocessing → 🔍 Extracting → 🏷️ Classifying..."):
+                result = run_pipeline(tmp_path)
+            os.unlink(tmp_path)
+            if result:
+                st.session_state.result         = result
+                st.session_state.uploaded_image = uploaded_file.getvalue()
+                st.session_state.file_name      = uploaded_file.name
+                st.session_state.page           = 'results'
+                st.rerun()
+            else:
+                st.error("❌ Could not process the image. Please try a clearer image.")
 
 
 # ─────────────────────────────────────────
@@ -265,16 +266,14 @@ elif st.session_state.page == 'results':
 
     st.divider()
 
-    # Extracted fields — using Streamlit columns instead of HTML table
     st.markdown("**🗂️ Extracted Information**")
     fields = extract_fields(result['extracted_text'], doc_type)
 
-    header_col1, header_col2 = st.columns([1, 2])
-    with header_col1:
-        st.markdown("<p style='font-size:0.78rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Field</p>", unsafe_allow_html=True)
-    with header_col2:
-        st.markdown("<p style='font-size:0.78rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Value</p>", unsafe_allow_html=True)
-
+    h1, h2 = st.columns([1, 2])
+    with h1:
+        st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Field</p>", unsafe_allow_html=True)
+    with h2:
+        st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Value</p>", unsafe_allow_html=True)
     st.markdown("<hr style='margin:6px 0; border-color:#2a2a3e;'>", unsafe_allow_html=True)
 
     for key, value in fields.items():
