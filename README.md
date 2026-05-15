@@ -9,6 +9,7 @@ Upload a document image and the system will:
 - Extract all text from the image using OCR
 - Classify the document type automatically
 - Display extracted fields like Name, Date of Birth, Date of Issue, etc.
+- Show a confidence score for the classification
 
 Supports: Passport, Citizenship Certificate, PAN Card, National ID
 
@@ -57,10 +58,14 @@ Opens in your browser at http://localhost:8501
 ## How to Use the Web UI
 
 1. Open the app in your browser
-2. Upload a document image by dragging and dropping or browsing files
+2. Upload a document image using the file uploader
 3. Click "Classify Document"
-4. View the results on the results page - document type, extracted fields, and raw OCR text
-5. Click "Classify Another Document" to go back and try another image
+4. View the results page showing:
+   - Document type with confidence score
+   - Extracted fields (Name, Date of Birth, Date of Issue, etc.)
+   - Keyword match scores
+   - Raw OCR text (expandable)
+5. Click "Classify Another Document" to go back
 
 ---
 
