@@ -31,13 +31,13 @@ st.markdown("""
         text-align: center;
         color: #888;
         font-size: 0.9rem;
-        margin-bottom: 0.8rem;
+        margin-bottom: 0.5rem;
     }
     .step-bar {
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0.5rem 0 0.8rem;
+        margin: 0.4rem 0 0.6rem;
     }
     .step {
         display: flex;
@@ -46,19 +46,19 @@ st.markdown("""
         gap: 4px;
     }
     .step-circle {
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 600;
     }
     .step-circle.active   { background:#6c63ff; color:white; border:2px solid #6c63ff; }
     .step-circle.done     { background:#6c63ff; color:white; border:2px solid #6c63ff; }
     .step-circle.inactive { background:transparent; color:#888; border:2px solid #444; }
-    .step-label { font-size: 0.7rem; font-weight: 500; }
+    .step-label { font-size: 0.68rem; font-weight: 500; }
     .step-label.active   { color: #6c63ff; }
     .step-label.done     { color: #6c63ff; }
     .step-label.inactive { color: #888; }
@@ -66,7 +66,7 @@ st.markdown("""
         flex: 1;
         height: 2px;
         max-width: 70px;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
     .step-line.done     { background: #6c63ff; }
     .step-line.inactive { background: #444; }
@@ -79,16 +79,6 @@ st.markdown("""
         gap: 14px;
         background: #1a1a2e;
         margin-bottom: 1rem;
-    }
-    .result-icon {
-        width: 48px;
-        height: 48px;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.6rem;
-        flex-shrink: 0;
     }
     .confidence-bar-bg {
         height: 6px;
@@ -112,6 +102,10 @@ st.markdown("""
         opacity: 0.9;
         color: white;
         border: none;
+    }
+    /* Hide the default streamlit uploader label gap */
+    [data-testid="stFileUploader"] {
+        margin-bottom: 0rem;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -154,11 +148,11 @@ if st.session_state.page == 'upload':
     render_stepper(1)
 
     st.markdown("""
-        <div style="text-align:center; margin-bottom:0.8rem;">
-            <span style="background:#1e3a5f; color:#4f8ef7; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🛂 Passport</span>
-            <span style="background:#1a3a2a; color:#4ade80; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">📋 Citizenship</span>
-            <span style="background:#3a2a1a; color:#fb923c; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🪪 National ID</span>
-            <span style="background:#2a1a3a; color:#c084fc; padding:3px 10px; border-radius:20px; font-size:0.75rem; margin:2px; display:inline-block;">🧾 PAN Card</span>
+        <div style="text-align:center; margin-bottom:0.6rem;">
+            <span style="background:#1e3a5f; color:#4f8ef7; padding:3px 10px; border-radius:20px; font-size:0.72rem; margin:2px; display:inline-block;">🛂 Passport</span>
+            <span style="background:#1a3a2a; color:#4ade80; padding:3px 10px; border-radius:20px; font-size:0.72rem; margin:2px; display:inline-block;">📋 Citizenship</span>
+            <span style="background:#3a2a1a; color:#fb923c; padding:3px 10px; border-radius:20px; font-size:0.72rem; margin:2px; display:inline-block;">🪪 National ID</span>
+            <span style="background:#2a1a3a; color:#c084fc; padding:3px 10px; border-radius:20px; font-size:0.72rem; margin:2px; display:inline-block;">🧾 PAN Card</span>
         </div>
     """, unsafe_allow_html=True)
 
@@ -167,20 +161,9 @@ if st.session_state.page == 'upload':
         type=["jpg", "jpeg", "png", "jfif", "bmp", "tiff", "webp"],
         label_visibility="collapsed"
     )
-    st.markdown('<p style="text-align:center; color:#666; font-size:0.8rem; margin-top:4px;">Supported: jpg, jpeg, png, jfif, bmp, tiff, webp</p>', unsafe_allow_html=True)
+    st.markdown('<p style="text-align:center; color:#555; font-size:0.75rem; margin-top:2px; margin-bottom:0.5rem;">Supported: jpg, jpeg, png, jfif, bmp, tiff, webp</p>', unsafe_allow_html=True)
 
     if uploaded_file is not None:
-        st.markdown(f"""
-            <div style="background:#1a1a2e; border:1px solid #2a2a3e; border-radius:10px; padding:0.8rem 1rem; display:flex; align-items:center; gap:12px; margin:0.8rem 0;">
-                <span style="font-size:1.5rem;">🖼️</span>
-                <div style="flex:1;">
-                    <p style="margin:0; font-size:0.9rem; font-weight:600; color:#fff;">{uploaded_file.name}</p>
-                    <p style="margin:0; font-size:0.78rem; color:#888;">{round(uploaded_file.size / 1024, 1)} KB • {uploaded_file.type}</p>
-                </div>
-                <span style="font-size:1.2rem;">✅</span>
-            </div>
-        """, unsafe_allow_html=True)
-
         if st.button("🔍 Classify Document"):
             with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
                 tmp.write(uploaded_file.read())
@@ -241,7 +224,7 @@ elif st.session_state.page == 'results':
     with right_col:
         st.markdown(f"""
             <div class="result-card">
-                <div class="result-icon" style="background:{bg};">{icon}</div>
+                <div style="width:48px; height:48px; border-radius:10px; background:{bg}; display:flex; align-items:center; justify-content:center; font-size:1.6rem; flex-shrink:0;">{icon}</div>
                 <div style="flex:1;">
                     <p style="font-size:0.78rem; color:#888; margin:0;">Classified as</p>
                     <p style="font-size:1.4rem; font-weight:700; margin:2px 0; color:{color};">{doc_type}</p>
@@ -274,15 +257,15 @@ elif st.session_state.page == 'results':
         st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Field</p>", unsafe_allow_html=True)
     with h2:
         st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Value</p>", unsafe_allow_html=True)
-    st.markdown("<hr style='margin:6px 0; border-color:#2a2a3e;'>", unsafe_allow_html=True)
+    st.markdown("<hr style='margin:4px 0; border-color:#2a2a3e;'>", unsafe_allow_html=True)
 
     for key, value in fields.items():
         c1, c2 = st.columns([1, 2])
         with c1:
-            st.markdown(f"<p style='color:#888; font-size:0.88rem; margin:0; padding:4px 0;'>{key}</p>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:#888; font-size:0.88rem; margin:0; padding:3px 0;'>{key}</p>", unsafe_allow_html=True)
         with c2:
-            st.markdown(f"<p style='color:#fff; font-size:0.88rem; font-weight:500; margin:0; padding:4px 0;'>{value}</p>", unsafe_allow_html=True)
-        st.markdown("<hr style='margin:2px 0; border-color:#1a1a2e;'>", unsafe_allow_html=True)
+            st.markdown(f"<p style='color:#fff; font-size:0.88rem; font-weight:500; margin:0; padding:3px 0;'>{value}</p>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:1px 0; border-color:#1a1a2e;'>", unsafe_allow_html=True)
 
     st.divider()
 
