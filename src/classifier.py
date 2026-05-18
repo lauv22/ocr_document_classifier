@@ -14,23 +14,70 @@ def classify_document(text):
             return all(any(kw in word for word in words) for kw in keyword_words)
 
     passport_keywords = [
-        'passport', 'republic of nepal', 'place of birth',
-        'date of issue', 'date of expiry', 'nationality', 'mrp', 'p<npl',
+        'passport', 
+        'republic of nepal', 
+        'place of birth',
+        'date of issue', 
+        'date of expiry', 
+        'nationality', 
+        'mrp', 
+        'p<npl',
+        'department of passports', 
+        'mofa',
     ]
+
     citizenship_keywords = [
-        'citizenship', 'nagrikta', 'nagarikta',
-        'certificate of citizenship', 'permanent residence',
-        'ward no', 'tole', 'citizenship no', 'nag. pra. pa',
+        'citizenship', 
+        'nagrikta', 
+        'nagarikta',
+        'certificate of citizenship',
+        'permanent residence',
+        'ward no',
+        'tole',
+        'citizenship no', 
+        'nag. pra. pa',
+        'nagarikta praman patra', 
+        'janma', 
+        'janam',
     ]
+
     pan_keywords = [
-        'pan', 'permanent account number', 'inland revenue',
-        'tax', 'pan no', 'office of inland revenue', 'taxpayer', 'vat',
+        'pan',
+        'pan card',
+        'p.a.n',
+        'painicard',
+        'paincard',
+        'painicar',
+        'permanent account number',
+        'inland revenue',
+        'ird.gov',
+        'ird.gov.np',
+        'tax',
+        'pan no',
+        'office of inland revenue',
+        'taxpayer',
+        'vat',
+        'rajaswa',
+        'aantarik rajaswa',
+        'account number',
+        'kara',
     ]
+
     national_id_keywords = [
-        'national identity card', 'national id', 'government of nepal',
-        'nepal government', 'nepal sarkar', 'rastriya parichaya patra',
-        'darta number', 'janma miti', 'citizenship number',
-        'smart card', 'nepalese', 'identity',
+        'national identity card',
+        'national id',
+        'government of nepal',
+        'nepal government',
+        'nepal sarkar',
+        'rastriya parichaya patra',
+        'darta number',
+        'janma miti',
+        'citizenship number',
+        'smart card',
+        'nepalese',
+        'identity',
+        'rastriya',
+        'parichaya',
     ]
 
     passport_score    = sum(1 for kw in passport_keywords    if keyword_matches(kw, text_lower, words))
@@ -71,9 +118,9 @@ def extract_fields(text, doc_type):
         mrz_match = re.search(r'P[<]?NPL([A-Z<]+)', text.upper())
         if mrz_match:
             mrz_part = mrz_match.group(1)
-            parts = mrz_part.split('<<')
-            surname   = parts[0].replace('<', ' ').strip() if len(parts) > 0 else "Not found"
-            given     = parts[1].replace('<', ' ').strip() if len(parts) > 1 else "Not found"
+            parts    = mrz_part.split('<<')
+            surname  = parts[0].replace('<', ' ').strip() if len(parts) > 0 else "Not found"
+            given    = parts[1].replace('<', ' ').strip() if len(parts) > 1 else "Not found"
             return surname, given
         return "Not found", "Not found"
 
@@ -81,13 +128,24 @@ def extract_fields(text, doc_type):
         idx = text.upper().find(keyword.upper())
         if idx == -1:
             return "Not found"
-        snippet = text[idx:idx+60]
+        snippet    = text[idx:idx+60]
         date_match = re.search(
             r'(\d{1,2}\s+[A-Z]{3}\s+\d{4}|\d{4}[-/]\d{2}[-/]\d{2}|\d{2}[-/]\d{2}[-/]\d{4})',
             snippet.upper()
         )
         if date_match:
             return date_match.group(1)
+        return "Not found"
+
+    def extract_pan_number(text):
+        # PAN numbers in Nepal are typically 9 digits
+        match = re.search(r'\b\d{9}\b', text)
+        if match:
+            return match.group(0)
+        # Also try with dashes
+        match = re.search(r'\b\d{3}-\d{3}-\d{3}\b', text)
+        if match:
+            return match.group(0)
         return "Not found"
 
     if doc_type == 'Passport':
@@ -103,6 +161,7 @@ def extract_fields(text, doc_type):
             'Place of Birth'   : get_value_after('PLACE OF BIRTH', text, 2),
             'Issuing Authority': get_value_after('ISSUING AUTHORITY', text, 4),
         }
+
     elif doc_type == 'National ID':
         surname, given_names = extract_from_mrz(text)
         fields = {
@@ -114,6 +173,7 @@ def extract_fields(text, doc_type):
             'Date of Issue' : extract_date('DATE OF ISSUE', text),
             'Date of Expiry': extract_date('DATE OF EXPIRY', text),
         }
+
     elif doc_type == 'Citizenship':
         fields = {
             'Document Type': 'Citizenship Certificate',
@@ -122,17 +182,21 @@ def extract_fields(text, doc_type):
             'Ward No'      : get_value_after('WARD NO', text, 1),
             'District'     : get_value_after('DISTRICT', text, 2),
         }
+
     elif doc_type == 'PAN':
         fields = {
             'Document Type': 'PAN Card',
             'Full Name'    : get_value_after('NAME', text, 3),
-            'PAN Number'   : get_value_after('PAN NO', text, 1),
-            'Date of Issue': extract_date('DATE OF ISSUE', text),
+            'PAN Number'   : extract_pan_number(text),
+            'Date of Birth': extract_date('DATE OF BIRTH', text),
+            'Date of Issue': extract_date('ISSUED DATE', text),
+            'Address'      : get_value_after('ADDRESS', text, 3),
         }
+
     else:
         fields = {
             'Document Type': 'Unknown',
-            'Note'         : 'Could not extract fields from this document'
+            'Note'         : 'Could not extract fields — try a higher resolution image'
         }
 
     return fields
