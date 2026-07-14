@@ -247,27 +247,4 @@ elif st.session_state.page == 'results':
             with cb:
                 st.markdown(f"**{score}**")
 
-    st.divider()
 
-    st.markdown("**🗂️ Extracted Information**")
-    fields = extract_fields(result['extracted_text'], doc_type)
-
-    h1, h2 = st.columns([1, 2])
-    with h1:
-        st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Field</p>", unsafe_allow_html=True)
-    with h2:
-        st.markdown("<p style='font-size:0.75rem; color:#888; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin:0;'>Value</p>", unsafe_allow_html=True)
-    st.markdown("<hr style='margin:4px 0; border-color:#2a2a3e;'>", unsafe_allow_html=True)
-
-    for key, value in fields.items():
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            st.markdown(f"<p style='color:#888; font-size:0.88rem; margin:0; padding:3px 0;'>{key}</p>", unsafe_allow_html=True)
-        with c2:
-            st.markdown(f"<p style='color:#fff; font-size:0.88rem; font-weight:500; margin:0; padding:3px 0;'>{value}</p>", unsafe_allow_html=True)
-        st.markdown("<hr style='margin:1px 0; border-color:#1a1a2e;'>", unsafe_allow_html=True)
-
-    st.divider()
-
-    with st.expander("🔍 View raw OCR text"):
-        st.code(result['extracted_text'], language=None)
