@@ -27,3 +27,5 @@ def main():
     if result:
         print(f"\n Done! Document classified as: {result['document_type']}")
 
+if __name__ == "__main__":
+    main()
