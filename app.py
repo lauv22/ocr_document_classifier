@@ -263,3 +263,11 @@ elif st.session_state.page == 'results':
         c1, c2 = st.columns([1, 2])
         with c1:
             st.markdown(f"<p style='color:#888; font-size:0.88rem; margin:0; padding:3px 0;'>{key}</p>", unsafe_allow_html=True)
+        with c2:
+            st.markdown(f"<p style='color:#fff; font-size:0.88rem; font-weight:500; margin:0; padding:3px 0;'>{value}</p>", unsafe_allow_html=True)
+        st.markdown("<hr style='margin:1px 0; border-color:#1a1a2e;'>", unsafe_allow_html=True)
+
+    st.divider()
+
+    with st.expander("🔍 View raw OCR text"):
+        st.code(result['extracted_text'], language=None)
