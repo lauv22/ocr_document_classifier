@@ -193,10 +193,3 @@ def extract_fields(text, doc_type):
             'Address'      : get_value_after('ADDRESS', text, 3),
         }
 
-    else:
-        fields = {
-            'Document Type': 'Unknown',
-            'Note'         : 'Could not extract fields — try a higher resolution image'
-        }
-
-    return fields
