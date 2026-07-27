@@ -17,7 +17,9 @@ def main():
         image_path = sys.argv[1]
 
     else:
-
+        # If no argument given, ask the user to type the path
+        print("\nNo image path provided.")
+        image_path = input("Enter image path: ").strip()
 
     # Run the full pipeline
     result = run_pipeline(image_path)
