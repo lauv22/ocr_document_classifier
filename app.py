@@ -4,11 +4,6 @@ import os
 from src.pipeline import run_pipeline
 from src.classifier import extract_fields
 
-st.set_page_config(
-    page_title="OCR Document Classifier",
-    page_icon="📄",
-    layout="centered"
-)
 
 if 'page' not in st.session_state:
     st.session_state.page = 'upload'
