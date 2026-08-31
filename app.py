@@ -1,8 +1,4 @@
-import streamlit as st
-import tempfile
-import os
-from src.pipeline import run_pipeline
-from src.classifier import extract_fields
+
 
 st.set_page_config(
     page_title="OCR Document Classifier",
