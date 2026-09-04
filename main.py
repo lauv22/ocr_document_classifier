@@ -21,11 +21,5 @@ def main():
         image_path = input("Enter image path: ").strip()
 
     # Run the full pipeline
-    result = run_pipeline(image_path)
 
-    if result:
-        print(f"\n Done! Document classified as: {result['document_type']}")
-
-if __name__ == "__main__":
-    main()
 
