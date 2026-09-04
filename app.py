@@ -10,7 +10,14 @@ st.set_page_config(
     layout="centered"
 )
 
-
+if 'page' not in st.session_state:
+    st.session_state.page = 'upload'
+if 'result' not in st.session_state:
+    st.session_state.result = None
+if 'uploaded_image' not in st.session_state:
+    st.session_state.uploaded_image = None
+if 'file_name' not in st.session_state:
+    st.session_state.file_name = None
 
 st.markdown("""
     <style>
